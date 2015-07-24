@@ -17,32 +17,7 @@
 from collections import OrderedDict
 import shlex
 
-
-class LocalizedString(object):
-
-    def __init__(self, source, localized, comment=None):
-        self.source = source
-        self.localized = localized
-        self.comment = comment
-
-    def __str__(self):
-        return repr(self)
-
-    def __repr__(self):
-        escaped_source = self.source.replace('"', r'\"')
-        escaped_localized = self.localized.replace('"', r'\"')
-        result = '"{escaped_source}" = "{escaped_localized}";'.format(**locals())
-
-        if self.comment:
-            result = '/* {} */\n{}'.format(self.comment, result)
-
-        return result
-
-    def __eq__(self, other):
-        if not isinstance(other, LocalizedString):
-            return False
-        else:
-            return self.source == other.source and self.localized == other.localized and self.comment == other.comment
+from tclocalizable.localizable_string import LocalizedString
 
 
 class StringsTable(OrderedDict):
@@ -115,7 +90,7 @@ class StringsTable(OrderedDict):
 
     def __getitem__(self, item):
         """
-        :rtype: LocalizedString
+        :rtype: tclocalizable.localizable_string.LocalizedString
         """
         return super(StringsTable, self).__getitem__(item)
 
@@ -123,7 +98,7 @@ class StringsTable(OrderedDict):
     def __setitem__(self, key, value):
         """
         :type key: str
-        :type value: LocalizedString
+        :type value: tclocalizable.localizable_string.LocalizedString
         """
         if key != value.source:
             raise KeyError('The key and the source of value are not the same')
@@ -144,18 +119,18 @@ class StringsTable(OrderedDict):
     # noinspection PyMethodOverriding
     def values(self):
         """
-        :rtype: collections.Iterable[LocalizedString]
+        :rtype: collections.Iterable[tclocalizable.localizable_string.LocalizedString]
         """
         return super(StringsTable, self).values()
 
     def items(self):
         """
-        :rtype: collections.Iterable[(str, LocalizedString)]
+        :rtype: collections.Iterable[(str, tclocalizable.localizable_string.LocalizedString)]
         """
         return super(StringsTable, self).items()
 
     def strings(self):
         """
-        :rtype: collections.Iterable[LocalizedString]
+        :rtype: collections.Iterable[tclocalizable.localizable_string.LocalizedString]
         """
         return super(StringsTable, self).values()

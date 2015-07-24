@@ -18,7 +18,8 @@ from collections import namedtuple
 import os
 import tempfile
 import unittest
-from tclocalizable.strings_table import StringsTable, LocalizedString
+from tclocalizable.strings_table import StringsTable
+from tclocalizable.localizable_string import LocalizedString
 
 source_root = os.path.abspath(os.path.dirname(__file__))
 ExpectedResult = namedtuple('ExpectedResult', ['souce', 'localized', 'comment'])
