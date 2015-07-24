@@ -1,0 +1,20 @@
+/* Some comemnt */
+"%@ doesn't have a list named %@." = "%1$@ は %2$@ というリストをもっていません。";
+
+/* Error message when Tickle tries to open a document but fails to fetch the version info,
+   English source is "Cannot get the version of this Tickle document." */
+"Cannot get the version of this Tickle document." = "Cannot get the version of this Tickle document.";
+
+"No comment" = "沒有註解";
+
+/* Comment with "quote" */
+"String with \"quote\".\"" = "有引號的字\"";
+
+/* String with = */
+"String with =" = "String with ="  ;
+
+/* String with semicolon */
+"String with ;" = "String with ;";
+
+/* String with spaces */
+"String\twith \n" = "String\twith \n";
