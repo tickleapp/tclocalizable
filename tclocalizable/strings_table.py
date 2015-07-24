@@ -17,7 +17,7 @@
 from collections import OrderedDict
 import shlex
 
-from tclocalizable.localizable_string import LocalizedString
+from tclocalizable.localized_string import LocalizedString
 
 
 class StringsTable(OrderedDict):
@@ -90,7 +90,7 @@ class StringsTable(OrderedDict):
 
     def __getitem__(self, item):
         """
-        :rtype: tclocalizable.localizable_string.LocalizedString
+        :rtype: tclocalizable.localized_string.LocalizedString
         """
         return super(StringsTable, self).__getitem__(item)
 
@@ -98,7 +98,7 @@ class StringsTable(OrderedDict):
     def __setitem__(self, key, value):
         """
         :type key: str
-        :type value: tclocalizable.localizable_string.LocalizedString
+        :type value: tclocalizable.localized_string.LocalizedString
         """
         if key != value.source:
             raise KeyError('The key and the source of value are not the same')
@@ -119,18 +119,18 @@ class StringsTable(OrderedDict):
     # noinspection PyMethodOverriding
     def values(self):
         """
-        :rtype: collections.Iterable[tclocalizable.localizable_string.LocalizedString]
+        :rtype: collections.Iterable[tclocalizable.localized_string.LocalizedString]
         """
         return super(StringsTable, self).values()
 
     def items(self):
         """
-        :rtype: collections.Iterable[(str, tclocalizable.localizable_string.LocalizedString)]
+        :rtype: collections.Iterable[(str, tclocalizable.localized_string.LocalizedString)]
         """
         return super(StringsTable, self).items()
 
     def strings(self):
         """
-        :rtype: collections.Iterable[tclocalizable.localizable_string.LocalizedString]
+        :rtype: collections.Iterable[tclocalizable.localized_string.LocalizedString]
         """
         return super(StringsTable, self).values()

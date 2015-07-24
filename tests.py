@@ -19,7 +19,7 @@ import os
 import tempfile
 import unittest
 from tclocalizable.strings_table import StringsTable
-from tclocalizable.localizable_string import LocalizedString
+from tclocalizable.localized_string import LocalizedString
 
 source_root = os.path.abspath(os.path.dirname(__file__))
 ExpectedResult = namedtuple('ExpectedResult', ['souce', 'localized', 'comment'])
