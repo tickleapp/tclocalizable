@@ -94,11 +94,11 @@ class StringsTable(OrderedDict):
         """
         return super(StringsTable, self).__getitem__(item)
 
-    def get(self, key, **kwargs):
+    def get(self, *args, **kwargs):
         """
         :rtype: tclocalizable.localized_string.LocalizedString
         """
-        return super(StringsTable, self).get(key, **kwargs)
+        return super(StringsTable, self).get(*args, **kwargs)
 
     # noinspection PyMethodOverriding
     def __setitem__(self, key, value):
