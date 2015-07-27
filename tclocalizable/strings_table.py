@@ -60,8 +60,8 @@ class StringsTable(OrderedDict):
 
     # Interfaces -------------------------------------------------------------------------------------------------------
 
-    def insert(self, source, localized, comment=None):
-        localized_string = LocalizedString(source, localized, comment=comment)
+    def insert(self, source, localized=None, comment=None):
+        localized_string = LocalizedString(source, localized=localized, comment=comment)
         self[source] = localized_string
         return localized_string
 

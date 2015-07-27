@@ -17,17 +17,27 @@
 
 class LocalizedString(object):
 
-    def __init__(self, source, localized, comment=None):
+    def __init__(self, source, localized=None, comment=None):
+        assert source, 'Source could not be none'
+
         self.source = source
-        self.localized = localized
+        self._localized = localized or ''
         self.comment = comment
+
+    @property
+    def localized(self):
+        return self._localized or self.source
+
+    @localized.setter
+    def localized(self, new_localized):
+        self._localized = new_localized
 
     def __str__(self):
         return repr(self)
 
     def __repr__(self):
         escaped_source = self.source.replace('"', r'\"')
-        escaped_localized = self.localized.replace('"', r'\"')
+        escaped_localized = self._localized.replace('"', r'\"') if self._localized else ''
         result = '"{escaped_source}" = "{escaped_localized}";'.format(**locals())
 
         if self.comment:
@@ -39,4 +49,4 @@ class LocalizedString(object):
         if not isinstance(other, LocalizedString):
             return False
         else:
-            return self.source == other.source and self.localized == other.localized and self.comment == other.comment
+            return self.source == other.source and self._localized == other._localized and self.comment == other.comment

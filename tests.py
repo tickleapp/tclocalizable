@@ -37,6 +37,7 @@ class TestStringsTableContentMixin(object):
         ExpectedResult("String with =", "String with =", "String with ="),
         ExpectedResult("String with ;", "String with ;", "String with semicolon"),
         ExpectedResult(r"String\twith \n", r"String\twith \n", "String with spaces"),
+        ExpectedResult("String not translated", "String not translated", "Not translated"),
     )
     """:type: tuple[ExpectedResult]"""
 
@@ -59,26 +60,119 @@ class TestIOStringsFile(unittest.TestCase, TestStringsTableContentMixin):
         self._test_strings_table_content(StringsTable(os.path.join(source_root, 'example.strings'), encoding='utf-8'))
 
     def test_write_16(self):
+        self.maxDiff = 1024
         strings_table = StringsTable(os.path.join(source_root, 'example16.strings'))
 
         with tempfile.TemporaryDirectory() as tmp_dir:
+            strings_table['String with ;'].localized = '有分號的字'
+            strings_table['String with ='].comment = 'String with "equal" sign'
+            strings_table.insert('String not translated 2', comment='Another not translated')
+
             output_file_path = os.path.join(tmp_dir, 'example16.strings')
             strings_table.write_file(output_file_path)
+            with open(output_file_path, 'r', encoding='utf-16') as f:
+                result = f.read()
 
-            input_strings_table = StringsTable(output_file_path)
-            self.assertIsNot(strings_table, input_strings_table)
-            self._test_strings_table_content(input_strings_table)
+            self.assertEqual(result, r'''/* Some comemnt */
+"%@ doesn't have a list named %@." = "%1$@ は %2$@ というリストをもっていません。";
+
+/* Error message when Tickle tries to open a document but fails to fetch the version info,
+   English source is "Cannot get the version of this Tickle document." */
+"Cannot get the version of this Tickle document." = "Cannot get the version of this Tickle document.";
+
+"No comment" = "沒有註解";
+
+/* Comment with "quote" */
+"String with \"quote\".\"" = "有引號的字\"";
+
+/* String with "equal" sign */
+"String with =" = "String with =";
+
+/* String with semicolon */
+"String with ;" = "有分號的字";
+
+/* String with spaces */
+"String\twith \n" = "String\twith \n";
+
+/* Not translated */
+"String not translated" = "";
+
+/* Another not translated */
+"String not translated 2" = "";
+''')
 
     def test_write_8(self):
+        self.maxDiff = 1024
         strings_table = StringsTable(os.path.join(source_root, 'example.strings'), encoding='utf-8')
 
         with tempfile.TemporaryDirectory() as tmp_dir:
             output_file_path = os.path.join(tmp_dir, 'example.strings')
-            strings_table.write_file(output_file_path)
+            strings_table.write_file(output_file_path, encoding='utf-8')
 
-            input_strings_table = StringsTable(output_file_path)
-            self.assertIsNot(strings_table, input_strings_table)
-            self._test_strings_table_content(input_strings_table)
+            with open(output_file_path, 'r') as f:
+                result = f.read()
+
+            self.assertEqual(result, r'''/* Some comemnt */
+"%@ doesn't have a list named %@." = "%1$@ は %2$@ というリストをもっていません。";
+
+/* Error message when Tickle tries to open a document but fails to fetch the version info,
+   English source is "Cannot get the version of this Tickle document." */
+"Cannot get the version of this Tickle document." = "Cannot get the version of this Tickle document.";
+
+"No comment" = "沒有註解";
+
+/* Comment with "quote" */
+"String with \"quote\".\"" = "有引號的字\"";
+
+/* String with = */
+"String with =" = "String with =";
+
+/* String with semicolon */
+"String with ;" = "String with ;";
+
+/* String with spaces */
+"String\twith \n" = "String\twith \n";
+
+/* Not translated */
+"String not translated" = "";
+''')
+
+    def test_write_not_translated(self):
+        self.maxDiff = 1024
+        strings_table = StringsTable(os.path.join(source_root, 'example.strings'), encoding='utf-8')
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            strings_table["String not translated"].localized = "QQ"
+
+            output_file_path = os.path.join(tmp_dir, 'example.strings')
+            strings_table.write_file(output_file_path, encoding='utf-8')
+            with open(output_file_path, 'r') as f:
+                result = f.read()
+
+            self.assertEqual(result, r'''/* Some comemnt */
+"%@ doesn't have a list named %@." = "%1$@ は %2$@ というリストをもっていません。";
+
+/* Error message when Tickle tries to open a document but fails to fetch the version info,
+   English source is "Cannot get the version of this Tickle document." */
+"Cannot get the version of this Tickle document." = "Cannot get the version of this Tickle document.";
+
+"No comment" = "沒有註解";
+
+/* Comment with "quote" */
+"String with \"quote\".\"" = "有引號的字\"";
+
+/* String with = */
+"String with =" = "String with =";
+
+/* String with semicolon */
+"String with ;" = "String with ;";
+
+/* String with spaces */
+"String\twith \n" = "String\twith \n";
+
+/* Not translated */
+"String not translated" = "QQ";
+''')
 
 
 class TestManipulateStringsFile(unittest.TestCase):
@@ -168,7 +262,7 @@ class TestMergeStringsFile(unittest.TestCase, TestStringsTableContentMixin):
 
     def test_merge_default(self):
         self.strings_table.merge(self.another_strings_table)
-        self.assertEqual(len(self.strings_table), 8)
+        self.assertEqual(len(self.strings_table), 9)
         self._test_strings_table_content(self.strings_table, expected_results=self.default_expected_results + (
             ExpectedResult("a key", "一個鑰匙", "A key"),
         ))
@@ -186,6 +280,7 @@ class TestMergeStringsFile(unittest.TestCase, TestStringsTableContentMixin):
             ExpectedResult("String with =", "String with =", "String with ="),
             ExpectedResult("String with ;", "String with ;", "String with semicolon"),
             ExpectedResult(r"String\twith \n", r"String\twith \n", "String with spaces"),
+            ExpectedResult("String not translated", "String not translated", "Not translated"),
             ExpectedResult("a key", "一個鑰匙", "A key"),
         ))
 
@@ -202,6 +297,7 @@ class TestMergeStringsFile(unittest.TestCase, TestStringsTableContentMixin):
             ExpectedResult("String with =", "String with =", "String with ="),
             ExpectedResult("String with ;", "String with ;", "String with semicolon"),
             ExpectedResult(r"String\twith \n", r"String\twith \n", "String with spaces"),
+            ExpectedResult("String not translated", "String not translated", "Not translated"),
             ExpectedResult("a key", "一個鑰匙", "A key"),
         ))
 
