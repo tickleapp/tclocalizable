@@ -32,6 +32,10 @@ class LocalizedString(object):
     def localized(self, new_localized):
         self._localized = new_localized
 
+    @property
+    def stored_localized(self):
+        return self._localized
+
     def __str__(self):
         return repr(self)
 
