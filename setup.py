@@ -21,7 +21,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
     long_description = f.read()
 
 setup(name='tclocalizable',
-      version='0.0.3',
+      version='0.0.4',
       url='https://github.com/tickleapp/tclocalizable',
       license='Apache License 2.0',
       author='sodas',
