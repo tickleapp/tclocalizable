@@ -34,6 +34,8 @@ class StringsTable(OrderedDict):
     @staticmethod
     def localized_strings_in_file(file_path, encoding='utf-16'):
         """
+        :type file_path: str
+        :type encoding: str
         :rtype: collections.Iterator[LocalizedString]
         """
         with open(file_path, 'r', encoding=encoding) as f:
@@ -53,11 +55,36 @@ class StringsTable(OrderedDict):
                 elif stripped_line.startswith('/*') or stripped_line.endswith('*/'):
                     pending_comment_lines += line
 
+    @classmethod
+    def duplicated_entries_in_file(cls, file_path, encoding='utf-16'):
+        """
+        :type file_path: str
+        :type encoding: str
+        :rtype: dict[str, list[LocalizedString]]
+        """
+        localized_strings_collection = {}
+        """:type: dict[str, list[LocalizedString]]"""
+        for localized_string in StringsTable.localized_strings_in_file(file_path, encoding=encoding):
+            if localized_string.source not in localized_strings_collection:
+                localized_strings_collection[localized_string.source] = []
+            localized_strings_collection[localized_string.source].append(localized_string)
+
+        return {source: localized_strings for source, localized_strings in localized_strings_collection.items()
+                if len(localized_strings) > 1}
+
     def read_file(self, file_path, encoding='utf-16'):
+        """
+        :type file_path: str
+        :type encoding: str
+        """
         for localized_string in self.localized_strings_in_file(file_path, encoding=encoding):
             self[localized_string.source] = localized_string
 
     def write_file(self, file_path, encoding='utf-16'):
+        """
+        :type file_path: str
+        :type encoding: str
+        """
         with open(file_path, 'w', encoding=encoding) as f:
             item_count = len(self)
             for idx, localized_string in enumerate(self.strings()):

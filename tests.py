@@ -174,6 +174,14 @@ class TestIOStringsFile(unittest.TestCase, TestStringsTableContentMixin):
 "String not translated" = "QQ";
 ''')
 
+    def test_duplicate(self):
+        duplicated_entries = StringsTable.duplicated_entries_in_file(os.path.join(source_root, 'duplicate16.strings'))
+        self.assertEqual(len(duplicated_entries), 1)
+        self.assertIn('String with "quote"."', duplicated_entries)
+        self.assertEqual(len(duplicated_entries['String with "quote"."']), 2)
+        self.assertEqual(duplicated_entries['String with "quote"."'][0].localized, '有引號的字"')
+        self.assertEqual(duplicated_entries['String with "quote"."'][1].localized, '有引號的字2"')
+
 
 class TestManipulateStringsFile(unittest.TestCase):
 
