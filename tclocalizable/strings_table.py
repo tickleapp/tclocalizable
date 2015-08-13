@@ -31,7 +31,11 @@ class StringsTable(OrderedDict):
 
     # I/O --------------------------------------------------------------------------------------------------------------
 
-    def read_file(self, file_path, encoding='utf-16'):
+    @staticmethod
+    def localized_strings_in_file(file_path, encoding='utf-16'):
+        """
+        :rtype: collections.Iterator[LocalizedString]
+        """
         with open(file_path, 'r', encoding=encoding) as f:
             pending_comment_lines = ''
             for line in f:
@@ -44,10 +48,14 @@ class StringsTable(OrderedDict):
                     localized = line_components[2]
                     comment = pending_comment_lines.strip().lstrip('/*').rstrip('*/').strip() or None
                     pending_comment_lines = ''
-                    localized_string = LocalizedString(source, localized, comment)
-                    self[source] = localized_string
+
+                    yield LocalizedString(source, localized, comment)
                 elif stripped_line.startswith('/*') or stripped_line.endswith('*/'):
                     pending_comment_lines += line
+
+    def read_file(self, file_path, encoding='utf-16'):
+        for localized_string in self.localized_strings_in_file(file_path, encoding=encoding):
+            self[localized_string.source] = localized_string
 
     def write_file(self, file_path, encoding='utf-16'):
         with open(file_path, 'w', encoding=encoding) as f:
