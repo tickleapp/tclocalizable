@@ -18,22 +18,40 @@
 class LocalizedString(object):
 
     def __init__(self, source, localized=None, comment=None):
+        """
+        :type source: str
+        :type localized: str
+        :type comment: str
+        :rtype: LocalizedString
+        """
         assert source, 'Source could not be none'
 
         self.source = source
+        """:type: str"""
         self._localized = localized or ''
+        """:type: str"""
         self.comment = comment
+        """:type: str"""
 
     @property
     def localized(self):
+        """
+        :rtype: str
+        """
         return self._localized or self.source
 
     @localized.setter
     def localized(self, new_localized):
+        """
+        :type new_localized: str
+        """
         self._localized = new_localized
 
     @property
     def stored_localized(self):
+        """
+        :rtype: str
+        """
         return self._localized
 
     def __str__(self):
