@@ -22,10 +22,8 @@ from tclocalizable.localized_string import LocalizedString
 
 class StringsTable(OrderedDict):
 
-    def __init__(self, file_path=None, encoding='utf-16', save_when_exits=True):
+    def __init__(self, file_path=None, encoding='utf-16'):
         super(StringsTable, self).__init__()
-        self._save_when_exits = save_when_exits
-
         if file_path:
             self.read_file(file_path, encoding=encoding)
 
